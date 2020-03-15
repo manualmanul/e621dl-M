@@ -33,10 +33,10 @@ def requests_retry_session(
     session.mount('https://', adapter)
     return session
 
-def delayed_post(url, payload, session):
+def delayed_get(url, payload, session):
     # Take time before and after getting the requests response.
     start = default_timer()
-    with session.post(url, data = payload) as response:
+    with session.get(url, data = payload) as response:
         elapsed = default_timer() - start
 
         # If the response took less than 1 second
@@ -56,23 +56,16 @@ def get_github_release(session):
         return response.json()['tag_name'].strip('v')
 
 def get_posts(search_string, earliest_date, last_id, session):
-    url = 'https://e621.net/post/index.json'
+    url = 'https://e621.net/posts.json'
     payload = {
         'limit': constants.MAX_RESULTS,
-        'before_id': last_id,
         'tags': f"date:>={earliest_date} {search_string}"
     }
+    
+    if last_id:
+        payload.update(tags = f"id:<{last_id} date:>={earliest_date} {search_string}")
 
-    with delayed_post(url, payload, session) as response:
-        response.raise_for_status()
-
-        return response.json()
-
-def get_known_post(post_id, session):
-    url = 'https://e621.net/post/show.json'
-    payload = {'id': post_id}
-
-    with delayed_post(url, payload, session) as response:
+    with delayed_get(url, payload, session) as response:
         response.raise_for_status()
 
         return response.json()
@@ -95,7 +88,7 @@ def get_tag_alias(user_tag, session):
     url = 'https://e621.net/tag/index.json'
     payload = {'name': user_tag}
 
-    with delayed_post(url, payload, session) as response:
+    with delayed_get(url, payload, session) as response:
         response.raise_for_status()
 
         results = response.json()
@@ -112,7 +105,7 @@ def get_tag_alias(user_tag, session):
     url = 'https://e621.net/tag_alias/index.json'
     payload = {'approved': 'true', 'query': user_tag}
 
-    with delayed_post(url, payload, session) as response:
+    with delayed_get(url, payload, session) as response:
         response.raise_for_status()
         results = response.json()
 
@@ -121,7 +114,7 @@ def get_tag_alias(user_tag, session):
             url = 'https://e621.net/tag/show.json'
             payload = {'id': tag['alias_id']}
 
-            with delayed_post(url, payload, session) as response:
+            with delayed_get(url, payload, session) as response:
                 response.raise_for_status()
                 results = response.json()
 
@@ -160,6 +153,6 @@ def finish_partial_downloads(session):
                 print(f"[!] Partial download {file} found.")
 
                 path = os.path.join(root, file)
-                url = get_known_post(file.split('.')[0], session)['file_url']
-
+                post_id = int(file.split('.')[0])
+                url = get_posts(f"id:{post_id}", 0, post_id + 1, session)['posts'][0]['file']['url']
                 download_post(url, path, session)

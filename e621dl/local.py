@@ -20,7 +20,7 @@ def get_config():
         make_config()
 
     with open('config.yaml', 'rt', encoding = 'utf-8') as infile:
-        config = yaml.load(infile)
+        config = yaml.load(infile, Loader = yaml.SafeLoader)
 
     return config
 

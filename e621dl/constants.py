@@ -1,12 +1,10 @@
-VERSION = '4.6.0'
+VERSION = '5.0.0'
 
 MAX_RESULTS = 320
+MAX_TAGS = 38
 PARTIAL_DOWNLOAD_EXT = 'request'
 
-DEFAULT_CONFIG_TEXT = '''toggles:
-    include_md5: false
-
-default_search:
+DEFAULT_CONFIG_TEXT = '''default_search:
     days: 1
     min_score: 0
     min_favs: 0
