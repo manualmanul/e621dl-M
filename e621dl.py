@@ -15,7 +15,7 @@ from e621dl import remote
 if __name__ == '__main__':
     # Create the requests session that will be used throughout the run.
     with remote.requests_retry_session() as session:
-        # Set the user-agent. Requirements are specified at https://e621.net/help/show/api#basics.
+        # Set the user-agent. Requirements are specified at https://e621.net/wiki_pages/2425#Basics.
         session.headers['User-Agent'] = f"e621dl.py/{constants.VERSION} (by Wulfre)"
         
         # Check if a new version is released on github. If so, notify the user.
@@ -23,10 +23,6 @@ if __name__ == '__main__':
             print('A NEW VERSION OF e621dl IS AVAILABLE ON GITHUB AT https://github.com/Wulfre/e621dl/releases/latest.')
 
         print(f"[i] Running e621dl version {constants.VERSION}.")
-        print('')
-        print("[i] Checking for partial downloads...")
-
-        remote.finish_partial_downloads(session)
 
         print('')
         print("[i] Parsing config...")
@@ -36,8 +32,17 @@ if __name__ == '__main__':
         # Initialize the lists that will be used to filter posts.
         searches = []
 
-        # Initialize last_id
+        # Initialize last_id.
         last_id = None
+
+        # Initialize login information.
+        login = {
+            'username': config['login'].get('username'),
+            'api_key': config['login'].get('api_key')
+        }
+
+        if login['username'] or login['api_key'] == None:
+            print('[i] No login detected. Some posts may be hidden and unable to be downloaded.')
 
         # Initialize user configured options in case any are missing.
         default_days = config['default_search'].get('days', 1)
@@ -70,6 +75,10 @@ if __name__ == '__main__':
                 'earliest_date': section_date
             })
 
+        print('')
+        print("[i] Checking for partial downloads...")
+        remote.finish_partial_downloads(session)
+
         for search in searches:
             print('')
 
@@ -83,7 +92,7 @@ if __name__ == '__main__':
             # Sets up a loop that will continue indefinitely until the last post of a search has been found.
             while True:
                 print("[i] Getting posts...")
-                results = remote.get_posts(search_string, search['earliest_date'], last_id, session)['posts']
+                results = remote.get_posts(search_string, search['earliest_date'], last_id, login, session)['posts']
 
                 # Gets the id of the last post found in the search so that the search can continue.
                 try:

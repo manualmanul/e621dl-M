@@ -55,11 +55,13 @@ def get_github_release(session):
 
         return response.json()['tag_name'].strip('v')
 
-def get_posts(search_string, earliest_date, last_id, session):
+def get_posts(search_string, earliest_date, last_id, login, session):
     url = 'https://e621.net/posts.json'
     payload = {
         'limit': constants.MAX_RESULTS,
-        'tags': f"date:>={earliest_date} {search_string}"
+        'tags': f"date:>={earliest_date} {search_string}",
+        'login': login['username'],
+        'api_key': login['api_key']
     }
     
     if last_id:
