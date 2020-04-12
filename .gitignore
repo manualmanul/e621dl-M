@@ -1,58 +1,13 @@
-####################################
-# WINDOWS
-####################################
-
-# Thumbnail Cache
-Thumbs.db
-ehthumbs.db
-ehthumbs_vista.db
-
-# Dump
-*.stackdump
-
-# Folder Config 
-[Dd]esktop.ini
-
-# Recycle Bin
-$RECYCLE.BIN/
-
-# Installers
-*.cab
-*.msi
-*.msix
-*.msm
-*.msp
-
-# Shortcuts
-*.lnk
-
-####################################
-# VS CODE
-####################################
-
-# User Files
+# VS Code
 .vscode/
 
-####################################
-# PYTHON
-####################################
-
-# Compiled
+# Python
 __pycache__/
 *.pyc
 
-# PyInstaller
-*.ico
-*.manifest
-*.spec
-build/
-dist/
-
-####################################
-# OTHER
-####################################
-
-# Repo Specific
+# Repo
 downloads/
-build.bat
-*config.*
+config.yaml
+
+# Remove before committing
+old/
