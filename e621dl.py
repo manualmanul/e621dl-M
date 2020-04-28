@@ -8,11 +8,11 @@ from e621dl import remote
 
 if __name__ == '__main__':
     print(f"[i] Running e621dl version {constants.VERSION}.")
-    
-    print("[i] Getting config...")
 
+    print("[i] Getting config...")
     config = local.get_config()
-    blacklist = config.get('blacklist', [])
+    
+    blacklist = config.get('blacklist') if config.get('blacklist') is not None else []
     search_defaults = config.get('search_defaults')
 
     searches = []
