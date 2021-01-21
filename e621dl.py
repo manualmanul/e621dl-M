@@ -32,7 +32,7 @@ if __name__ == '__main__':
     # if StrictVersion(constants.VERSION) < StrictVersion(remote.get_github_release(session)):
     # local.print_log('e621dl', 'info', 'A NEW VERSION OF E621DL IS AVAILABLE ON GITHUB: (https://github.com/Wulfre/e621dl/releases/latest).')
 
-    local.print_log('e621dl', 'info', 'Running e621dl version ' + constants.VERSION + '.')
+    local.print_log('e621dl', 'info', 'Running e621dl-M version ' + constants.VERSION + '.')
     local.print_log('e621dl', 'info', 'Checking for partial downloads.')
     remote.finish_partial_downloads(session)
     local.print_log('e621dl', 'info', 'Parsing config.')
